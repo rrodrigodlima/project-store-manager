@@ -10,4 +10,14 @@ router.post(
   salesController.createSale,
 );
 
+router.get(
+  '/',
+  salesController.listSales,
+);
+
+router.get(
+  '/:id',
+  salesController.getById,
+);
+
 module.exports = router;

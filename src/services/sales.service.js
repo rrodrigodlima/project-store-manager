@@ -23,4 +23,23 @@ const createSale = async (itemsSold) => {
   return { type: null, message: { id, itemsSold } };
 };
 
-module.exports = { createSale };
+const findAllSales = async () => {
+  const sales = await salesModel.findAll();
+  return { type: null, message: sales };
+};
+
+const findSaleById = async (saleId) => {
+  const error = schema.validateId(saleId);
+  if (error.type) return error;
+
+  const sale = await salesModel.selectById(saleId);
+  if (!sale.length) return { type: 'REQUEST_NOT_FOUND', message: 'Sale not found' };
+
+  return { type: null, message: sale };
+};
+
+module.exports = {
+  createSale,
+  findAllSales,
+  findSaleById,
+};
