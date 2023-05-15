@@ -7,7 +7,7 @@ chai.use(sinonChai);
 
 const { productsService } = require('../../../src/services');
 const { productsController } = require('../../../src/controllers');
-const { productListMock, newProductMock } = require('./mocks/products.controller.mock');
+const { productListMock, newProductMock, productMock } = require('./mocks/products.controller.mock');
 
 describe('Teste de unidade do productsController', function () {
   describe('Listando os products', function () {
@@ -101,6 +101,58 @@ describe('Teste de unidade do productsController', function () {
       expect(res.json).to.have.been.calledWith({ message: 'Product not found' });
     });
   });
+  describe('Cadastrando uma novo product', function () {
+    it('ao enviar dados válidos deve salvar com sucesso!', async function () {
+      // Arrange
+      const res = {};
+      const req = {
+        body: productMock,
+      };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+       sinon
+        .stub(productsService, 'registerProduct')
+        .resolves({ type: null, message: newProductMock });
+
+      // Act
+      await productsController.registerProduct(req, res);
+
+      // Assert
+      expect(res.status).to.have.been.calledWith(201);
+      expect(res.json).to.have.been.calledWith(newProductMock);
+    });
+
+    it('ao enviar um nome com menos de 5 caracteres deve retornar um erro!', async function () {
+      // Arrange
+      const res = {};
+      /* Aqui mudamos o dublê de req.body com um valor inválido para o campo name */
+      const req = {
+        body: {
+          name: 'fake',
+        },
+      };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      sinon
+        .stub(productsService, 'registerProduct')
+        .resolves({
+          type: 'INVALID_VALUE', message: '"name" length must be at least 5 characters long',
+        });
+
+      // Act
+      await productsController.registerProduct(req, res);
+
+      // Assert
+      /* O status HTTP retornado deve ser 422 */
+      expect(res.status).to.have.been.calledWith(422);
+      /* Ajustamos a mensagem de erro esperada para ser a mensagem gerada pelo service */
+      expect(res.json).to.have.been.calledWith({ message: '"name" length must be at least 5 characters long' });
+    });
+  });
+
+
   afterEach(function () {
     sinon.restore();
   });
