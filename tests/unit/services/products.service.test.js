@@ -56,7 +56,7 @@ describe('Verificando service products', function () {
       expect(result.type).to.equal('INVALID_VALUE');
       expect(result.message).to.equal('"name" length must be at least 5 characters long');
     });
-  });  
+  });
   afterEach(function () {
     sinon.restore();
   });
