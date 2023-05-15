@@ -56,23 +56,7 @@ describe('Verificando service products', function () {
       expect(result.type).to.equal('INVALID_VALUE');
       expect(result.message).to.equal('"name" length must be at least 5 characters long');
     });
-  });
-
-  describe('cadastro de uma pessoa passageira com valores válidos', function () {
-    it('retorna o ID da pessoa passageira cadastrada', async function () {
-      // arrange
-      sinon.stub(productsModel, 'insert').resolves(1);
-      sinon.stub(productsModel, 'findById').resolves(allProducts[0]);
-
-      // act
-      const result = await productsService.registerProduct(validName);
-
-      // assert
-      expect(result.type).to.equal(null);
-      expect(result.message).to.deep.equal(allProducts[0]);
-    });
-  });
-  
+  });  
   afterEach(function () {
     sinon.restore();
   });

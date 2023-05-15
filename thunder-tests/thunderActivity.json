@@ -5,12 +5,17 @@
     "containerId": "",
     "name": "localhost:3306/products",
     "url": "localhost:3001/products",
-    "method": "GET",
+    "method": "POST",
     "sortNum": 0,
     "created": "2023-05-14T20:34:26.874Z",
-    "modified": "2023-05-15T14:18:14.159Z",
+    "modified": "2023-05-15T16:18:26.116Z",
     "headers": [],
     "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"name\": \"Masdng\"\n}",
+      "form": []
+    },
     "tests": []
   },
   {

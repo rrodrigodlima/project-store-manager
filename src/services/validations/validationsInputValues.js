@@ -7,10 +7,9 @@ const validateId = (id) => {
   return { type: null, message: '' };
 };
 
-const validateNewProduct = (name) => {
-  const { error } = addProductSchema
-    .validate({ name });
-  if (error) { 
+const validateNewProduct = (product) => {
+  const { error } = addProductSchema.validate(product);
+  if (error) {
     return { type: 'INVALID_VALUE', message: '"name" length must be at least 5 characters long' };
   }
   return { type: null, message: '' };
