@@ -2,9 +2,7 @@
 
 const express = require('express');
 const { productsController } = require('../controllers');
-
-// const validateNewPassengerFields = require('../middlewares/validateNewPassengerFields');
-// const validateRequestTravelSchema = require('../middlewares/validateRequestTravelSchema');
+const validateNewProductFields = require('../middlewares/validateNewProductFields');
 
 const router = express.Router();
 
@@ -18,11 +16,11 @@ router.get(
   productsController.getProduct,
 );
 
-// router.post(
-//   '/',
-//   validateNewPassengerFields,
-//   passengerController.createPassenger,
-// );
+router.post(
+  '/',
+  validateNewProductFields,
+  productsController.registerProduct,
+);
 
 // router.post(
 //   '/:passengerId/request/travel',
