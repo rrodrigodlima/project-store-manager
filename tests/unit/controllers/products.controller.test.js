@@ -89,7 +89,7 @@ describe('Teste de unidade do productsController', function () {
       // Definimos o dublê do service retornando o contrato definido para esse cenário
       sinon
         .stub(productsService, 'findById')
-        .resolves({ type: 'PRODUCT_NOT_FOUND', message: 'Product not found' });
+        .resolves({ type: 'REQUEST_NOT_FOUND', message: 'Product not found' });
 
       // Act
       await productsController.getProduct(req, res);

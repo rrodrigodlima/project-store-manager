@@ -11,7 +11,7 @@ const productNotFound = [
 
 
 const notFoundError = {
-  type: 'PRODUCT_NOT_FOUND',
+  type: 'REQUEST_NOT_FOUND',
   message: 'Product not found',
 };
 

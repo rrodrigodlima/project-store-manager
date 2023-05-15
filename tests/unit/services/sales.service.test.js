@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const { salesService } = require('../../../src/services');
 const { salesModel, productsModel } = require('../../../src/models');
-const { sale, saleCreated, invalidQuantity } = require('../controllers/mocks/sales.controller.mock');
+const { sale, saleCreated, invalidQuantity, saleSuccessful, saleByIdSuccessful } = require('../controllers/mocks/sales.controller.mock');
 const { productNotFound, notFoundError } = require('./mocks/sales.service.mock');
 
 
@@ -37,6 +37,41 @@ describe('Verificando service sales', function () {
       const result = await salesService.createSale(invalidQuantity);
       expect(result.type).to.be.equal('INVALID_VALUE');
       expect(result.message).to.deep.equal('"quantity" must be greater than or equal to 1');
+    });
+  });
+  describe('Get all sales', () => {
+    it('Retorna todas as sales', async () => {
+      sinon.stub(salesModel, 'findAll').resolves(saleSuccessful);
+
+      const result = await salesService.findAllSales();
+
+      expect(result.type).to.be.equal(null);
+      expect(result.message).to.deep.equal(saleSuccessful);
+    });
+  });
+
+  describe('Get sales by id', () => {
+    it('Retorna a sale', async () => {
+      sinon.stub(salesModel, 'selectById').resolves(saleByIdSuccessful);
+
+      const result = await salesService.findSaleById(1);
+
+      expect(result.type).to.be.equal(null);
+      expect(result.message).to.deep.equal(saleByIdSuccessful);
+    });
+    it('Retorna um erro 404 se a sale não for encontrada', async () => {
+      sinon.stub(salesModel, 'selectById').resolves({});
+
+      const result = await salesService.findSaleById(666);
+
+      expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
+      expect(result.message).to.deep.equal('Sale not found');
+    });
+    it('Retorna um erro 422 se o id for inválido', async () => {
+      const result = await salesService.findSaleById('invalidId');
+
+      expect(result.type).to.be.equal('INVALID_VALUE');
+      expect(result.message).to.deep.equal('"id" must be a number');
     });
   });
 

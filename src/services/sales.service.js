@@ -13,7 +13,7 @@ const createSale = async (itemsSold) => {
 
   if (promiseALL.includes('notFound')) {
     return {
-      type: 'PRODUCT_NOT_FOUND',
+      type: 'REQUEST_NOT_FOUND',
       message: 'Product not found',
     };
   }

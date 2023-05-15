@@ -32,7 +32,7 @@ describe('Verificando service products', function () {
       // act
       const result = await productsService.findById(1);
       // assert
-      expect(result.type).to.equal('PRODUCT_NOT_FOUND');
+      expect(result.type).to.equal('REQUEST_NOT_FOUND');
       expect(result.message).to.equal('Product not found');
     });
 
