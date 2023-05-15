@@ -21,9 +21,9 @@ const getProduct = async (req, res) => {
 const registerProduct = async (req, res) => {
   const { name } = req.body;
 
-  const { type, message } = await productsService.registerProduct(name);
+  const { type, message } = await productsService.registerProduct({ name });
 
-  if (type) return res.status(errorMap.mapError(type)).json(message);
+  if (type) return res.status(errorMap.mapError(type)).json({ message });
 
   res.status(201).json(message);
 };
