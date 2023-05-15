@@ -17,6 +17,12 @@ const findById = async (productId) => {
   return camelize(product);
 };
 
+const selectById = async (productId) => {
+  const [result] = await connection
+    .execute('SELECT * FROM StoreManager.products WHERE id = ?;', [productId]);
+  return result;
+};
+
 const insert = async (product) => {
   const columns = Object.keys(snakeize(product)).join(', ');
 
@@ -36,4 +42,5 @@ module.exports = {
   findAll,
   findById,
   insert,
+  selectById,
 };
