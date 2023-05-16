@@ -38,9 +38,23 @@ const insert = async (product) => {
   return insertId;
 };
 
+const updateProductById = async (productId, update) => {
+  const placeholders = Object.keys(snakeize(update))
+    .map((key) => `${key} = ?`)
+    .join(', ');
+
+  const result = await connection.execute(
+    `UPDATE StoreManager.products SET ${placeholders} WHERE id = ?`,
+    [...Object.values(update), productId],
+  );
+
+  return result;
+};
+
 module.exports = {
   findAll,
   findById,
   insert,
   selectById,
+  updateProductById,
 };

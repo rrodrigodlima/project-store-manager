@@ -22,6 +22,12 @@ router.post(
   productsController.registerProduct,
 );
 
+router.put(
+  '/:id',
+  validateNewProductFields,
+  productsController.editProduct,
+);
+
 // router.post(
 //   '/:passengerId/request/travel',
 //   validateRequestTravelSchema,

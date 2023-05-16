@@ -26,8 +26,22 @@ const registerProduct = async (name) => {
   return { type: null, message: newProduct };
 };
 
+const updateProduct = async (productId, update) => {
+  let error = await schema.validateProductExists([{ productId }]);
+  if (error.type) return error;
+
+  error = await schema.validateNewProduct(update);
+  if (error.type) return error;
+
+  await productsModel.updateProductById(productId, update);
+
+  const [result] = await productsModel.selectById(productId);
+  return { type: null, message: result };
+};
+
 module.exports = {
   findAll,
   findById,
   registerProduct,
+  updateProduct,
 };
