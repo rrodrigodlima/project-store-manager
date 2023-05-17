@@ -28,6 +28,11 @@ router.put(
   productsController.editProduct,
 );
 
+router.delete(
+  '/:id',
+  productsController.removeProduct,
+);
+
 // router.post(
 //   '/:passengerId/request/travel',
 //   validateRequestTravelSchema,
