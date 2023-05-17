@@ -33,6 +33,15 @@ describe('Testes de unidade do model de products', function () {
     expect(result).to.equal(42);
   });
 
+  it('Editando um produto', async () => {
+
+    sinon.stub(connection, 'execute').resolves({ id: 1, name: 'Mustang' });
+
+    const result = await productsModel.updateProductById(1, { name: 'Mustang' });
+
+    expect(result).to.be.deep.equal({ id: 1, name: 'Mustang' });
+  });
+
   afterEach(function () {
     sinon.restore();
   });

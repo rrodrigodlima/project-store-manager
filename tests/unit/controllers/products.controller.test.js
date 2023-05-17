@@ -9,6 +9,10 @@ const { productsService } = require('../../../src/services');
 const { productsController } = require('../../../src/controllers');
 const { productListMock, newProductMock, productMock } = require('./mocks/products.controller.mock');
 
+const validateNewProductFields = require('../../../src/middlewares/validateNewProductFields');
+
+
+
 describe('Teste de unidade do productsController', function () {
   describe('Listando os products', function () {
     it('Deve retornar o status 200 e a lista', async function () {
@@ -152,6 +156,70 @@ describe('Teste de unidade do productsController', function () {
     });
   });
 
+  describe('Update product tests', () => {
+    it('deve responder com 200 e produto alterado', async () => {
+      const res = {};
+      const req = { body: { name: 'Mustang' }, params: { id: 1 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      sinon
+        .stub(productsService, 'updateProduct')
+        .resolves({ type: null, message: { id: 1, name: 'Corolla' } });
+
+      await productsController.editProduct(req, res);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith({ id: 1, name: 'Corolla' });
+    });
+
+    it('deve responder com 400 erro caso o nome esteja faltando', async () => {
+      const res = {};
+      const req = { body: {}, params: { id: 1 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      validateNewProductFields(req, res);
+
+      expect(res.status).to.have.been.calledWith(400);
+      expect(res.json).to.have.been.calledWith({ type: 'FIELD_NOT_FOUND', message: '"name" is required' });
+    });
+
+    it('deve responder erro 422 quando o nome tiver menos que 5 caracteres ', async () => {
+      const res = {};
+      const req = { body: { name: 'aa' }, params: { id: 1 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      sinon
+        .stub(productsService, 'updateProduct')
+        .resolves({ type: 'INVALID_VALUE', message: '"name" length must be at least 5 characters long' });
+
+      await productsController.editProduct(req, res);
+
+      expect(res.status).to.have.been.calledWith(422);
+      expect(res.json).to.have.been.calledWith({ message: '"name" length must be at least 5 characters long' });
+    });
+
+    it('deve responder com erro 404 quando o id for invalido', async () => {
+      const res = {};
+      const req = { body: { name: 'Corolla' }, params: { id: 666 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      
+      sinon
+        .stub(productsService, 'updateProduct')
+        .resolves({ type: 'REQUEST_NOT_FOUND', message: 'Product not found' });
+
+      await productsController.editProduct(req, res);
+
+      expect(res.status).to.have.been.calledWith(404);
+      expect(res.json).to.have.been.calledWith({ message: 'Product not found' });
+    });
+  });
 
   afterEach(function () {
     sinon.restore();

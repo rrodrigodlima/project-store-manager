@@ -9,7 +9,7 @@ chai.use(sinonChai);
 
 const validName = 'Computador';
 
-const errorMessage = { message: '"name" is required' };
+const errorMessage = { type: 'FIELD_NOT_FOUND', message: '"name" is required' };
 
 describe('Teste de unidade do middleware validateNewProductFields', function () {
   it('Tentando cadastrar um novo product sem nome retorna erro', async function () {
