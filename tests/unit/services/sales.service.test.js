@@ -39,6 +39,7 @@ describe('Verificando service sales', function () {
       expect(result.message).to.deep.equal('"quantity" must be greater than or equal to 1');
     });
   });
+
   describe('Get all sales', () => {
     it('Retorna todas as sales', async () => {
       sinon.stub(salesModel, 'findAll').resolves(saleSuccessful);
@@ -59,6 +60,7 @@ describe('Verificando service sales', function () {
       expect(result.type).to.be.equal(null);
       expect(result.message).to.deep.equal(saleByIdSuccessful);
     });
+    
     it('Retorna um erro 404 se a sale não for encontrada', async () => {
       sinon.stub(salesModel, 'selectById').resolves({});
 
@@ -67,11 +69,42 @@ describe('Verificando service sales', function () {
       expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
       expect(result.message).to.deep.equal('Sale not found');
     });
+
     it('Retorna um erro 422 se o id for inválido', async () => {
       const result = await salesService.findSaleById('invalidId');
 
       expect(result.type).to.be.equal('INVALID_VALUE');
       expect(result.message).to.deep.equal('"id" must be a number');
+    });
+  });
+
+  describe('Delete sale by id', () => {
+    it('Deletando com sucesso', async () => {
+      sinon.stub(salesModel, 'selectById').resolves(saleByIdSuccessful);
+      sinon.stub(salesModel, 'deleteById').resolves({});
+
+      const result = await salesService.deleteSale(1);
+
+      expect(result.type).to.be.equal(null);
+      expect(result.message).to.deep.equal({});
+    });
+
+    it('Retorna um erro se receber um id inválido', async () => {
+      sinon.stub(salesModel, 'deleteById').resolves({});
+
+      const result = await salesService.deleteSale('invalidID');
+
+      expect(result.type).to.be.equal('INVALID_VALUE');
+      expect(result.message).to.deep.equal('"id" must be a number');
+    });
+    
+    it('Retorna um erro se a sale não for encontrada', async () => {
+      sinon.stub(salesModel, 'selectById').resolves([]);
+
+      const result = await salesService.deleteSale(666);
+
+      expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
+      expect(result.message).to.deep.equal('Sale not found');
     });
   });
 

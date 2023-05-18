@@ -13,7 +13,7 @@ describe('Testes de unidade do model de sales', function () {
     expect(result).to.be.deep.equal(93);
   });
 
-  it('SELECT sales', async () => {
+  it('Selecionando uma sale', async () => {
     sinon.stub(connection, 'execute').resolves(saleDB);
 
     const result = await salesModel.findAll();
@@ -21,12 +21,21 @@ describe('Testes de unidade do model de sales', function () {
     expect(result).to.be.deep.equal(saleResponse);
   });
 
-  it('SELECT sale BY id', async () => {
+  it('Selecionando uma sale por id', async () => {
     sinon.stub(connection, 'execute').resolves(saleByIdDB);
 
     const result = await salesModel.selectById(1);
 
     expect(result).to.be.deep.equal(saleByIdResponse);
+  });
+
+  it('Deletando uma sale', async () => {
+
+    sinon.stub(connection, 'execute').resolves([{}]);
+
+    const result = await salesModel.deleteById(1);
+
+    expect(result).to.be.deep.equal({});
   });
 
   afterEach(function () {

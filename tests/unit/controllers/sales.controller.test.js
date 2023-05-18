@@ -94,6 +94,60 @@ describe('Teste de unidade do salesController', () => {
     });
   });
 
+  describe('Remove sale', () => {
+    it('Retorna 204 quando deleta a sale com sucesso', async () => {
+      const res = {
+        sendStatus: sinon.stub({ sendStatus: (status) => status }, 'sendStatus').returns(204)
+      };
+      const req = { params: { id: 1 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      sinon
+        .stub(salesService, 'deleteSale')
+        .resolves({ type: null, message: {} });
+
+      await salesController.removeSale(req, res);
+
+      expect(res.sendStatus).to.have.been.calledWith(204);
+    });
+    
+    it('Retorna 422 quando o id é inválido', async () => {
+      const res = {};
+      const req = { params: { id: 'xxx' } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      sinon
+        .stub(salesService, 'deleteSale')
+        .resolves({ type: 'INVALID_VALUE', message: '"id" must be a number' });
+
+      await salesController.removeSale(req, res);
+
+      expect(res.status).to.have.been.calledWith(422);
+      expect(res.json).to.have.been.calledWith({ message: '"id" must be a number' });
+    });
+    
+    it('Retorna 404 quando o id não existe', async () => {
+      const res = {};
+      const req = { params: { id: 666 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      
+      sinon
+        .stub(salesService, 'deleteSale')
+        .resolves({ type: 'REQUEST_NOT_FOUND', message: 'Sale not found' });
+
+      await salesController.removeSale(req, res);
+
+      expect(res.status).to.have.been.calledWith(404);
+      expect(res.json).to.have.been.calledWith({ message: 'Sale not found' });
+    });
+  });
+
   afterEach(function () {
     sinon.restore();
   });
