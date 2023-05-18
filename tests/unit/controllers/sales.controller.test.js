@@ -148,6 +148,58 @@ describe('Teste de unidade do salesController', () => {
     });
   });
 
+  describe('Update sale', () => {
+    it('Retorna status 200 quando sucesso', async () => {
+      const res = {};
+      const req = { params: { id: 93 } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      sinon
+        .stub(salesService, 'updateSale')
+        .resolves({ type: null, message: saleCreated });
+
+      await salesController.editSale(req, res);
+
+      expect(res.status).to.have.been.calledWith(200);
+      expect(res.json).to.have.been.calledWith(saleCreated);
+    });
+
+    it('Retorna status 422 quando o id é inválido', async () => {
+      const res = {};
+      const req = { params: { id: 'xxx' } };
+
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+
+      sinon
+        .stub(salesService, 'updateSale')
+        .resolves({ type: 'INVALID_VALUE', message: '"id" must be a number' });
+
+      await salesController.editSale(req, res);
+
+      expect(res.status).to.have.been.calledWith(422);
+      expect(res.json).to.have.been.calledWith({ message: '"id" must be a number' });
+    });
+
+    it('Retorna status 404 quando o id não existe', async () => {
+      const res = {};
+      const req = { params: { id: 666 } };
+      res.status = sinon.stub().returns(res);
+      res.json = sinon.stub().returns();
+      
+      sinon
+        .stub(salesService, 'updateSale')
+        .resolves({ type: 'REQUEST_NOT_FOUND', message: 'Sale not found' });
+
+      await salesController.editSale(req, res);
+
+      expect(res.status).to.have.been.calledWith(404);
+      expect(res.json).to.have.been.calledWith({ message: 'Sale not found' });
+    });
+  });
+
   afterEach(function () {
     sinon.restore();
   });

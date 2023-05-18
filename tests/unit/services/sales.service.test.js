@@ -4,6 +4,7 @@ const { salesService } = require('../../../src/services');
 const { salesModel, productsModel } = require('../../../src/models');
 const { sale, saleCreated, invalidQuantity, saleSuccessful, saleByIdSuccessful } = require('../controllers/mocks/sales.controller.mock');
 const { productNotFound, notFoundError } = require('./mocks/sales.service.mock');
+const { saleByIdResponse } = require('../models/mocks/sales.model.mock');
 
 
 describe('Verificando service sales', function () {
@@ -105,6 +106,69 @@ describe('Verificando service sales', function () {
 
       expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
       expect(result.message).to.deep.equal('Sale not found');
+    });
+  });
+
+  describe('Update sale by id', () => {
+    it('Atualizando uma sale com sucesso', async () => {
+      sinon.stub(salesModel, 'selectById').resolves(saleByIdSuccessful);
+      sinon.stub(productsModel, 'selectById').resolves([{ id: 1, name: 'Mustang' }]);
+      sinon.stub(salesModel, 'updateById').resolves([{ productId: 1, quantity: 10 }, { productId: 2, quantity: 20 }]);
+
+      const result = await salesService.updateSale(1, [{ productId: 1, quantity: 10 }, { productId: 2, quantity: 20 }]);
+
+      expect(result.type).to.be.equal(null);
+      expect(result.message).to.deep.equal({
+        "saleId": 1,
+        "itemsUpdated": [
+          { "productId": 1, "quantity": 10 },
+          { "productId": 2, "quantity": 20 },
+        ],
+      });
+    });
+
+    it('Se o id for inválido retorna um erro', async () => {
+      sinon.stub(salesModel, 'updateById').resolves({});
+
+      const result = await salesService.updateSale('xx');
+
+      expect(result.type).to.be.equal('INVALID_VALUE');
+      expect(result.message).to.deep.equal('"id" must be a number');
+    });
+
+    it('Retorna erro caso a sale não exista', async () => {
+      sinon.stub(salesModel, 'selectById').resolves([]);
+
+      const result = await salesService.updateSale(666, [{ productId: 1, quantity: 10 }, { productId: 2, quantity: 20 }]);
+
+      expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
+      expect(result.message).to.deep.equal('Sale not found');
+    });
+
+    it('Retorna um erro caso a sale não seja encontrada', async () => {
+      sinon.stub(salesModel, 'selectById').resolves(saleByIdResponse);
+
+      const productStub = sinon.stub(productsModel, 'selectById');
+      productStub.withArgs(1).resolves([{ id: 1, name: 'Mustang' }]);
+      productStub.withArgs(666).resolves([]);
+
+      const result = await salesService.updateSale(1, [{ productId: 1, quantity: 1 }, { productId: 666, quantity: 2 }]);
+
+      expect(result.type).to.be.equal('REQUEST_NOT_FOUND');
+      expect(result.message).to.deep.equal('Product not found');
+    });
+
+    it('Retorna um erro caso falte algum dado', async () => {
+      sinon.stub(salesModel, 'selectById').resolves(saleByIdResponse);
+
+      const productStub = sinon.stub(productsModel, 'selectById');
+      productStub.withArgs(1).resolves([{ id: 1, name: 'Mustang' }]);
+      productStub.withArgs(2).resolves([{ id: 2, name: 'Porche' }]);
+
+      const result = await salesService.updateSale(1, [{ productId: 1, quantity: 1 }, { productId: 2 }]);
+
+      expect(result.type).to.be.equal('INVALID_VALUE');
+      expect(result.message).to.deep.equal('"quantity" is required');
     });
   });
 

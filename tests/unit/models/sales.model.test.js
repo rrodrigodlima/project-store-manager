@@ -38,6 +38,15 @@ describe('Testes de unidade do model de sales', function () {
     expect(result).to.be.deep.equal({});
   });
 
+  it('Atualizando uma sale', async () => {
+
+    sinon.stub(connection, 'execute').resolves([[{ product_id: 1, quantity: 10 }, { product_id: 2, quantity: 20 }]]);
+
+    const result = await salesModel.updateById(1, sale);
+    
+    expect(result).to.be.deep.equal([{ productId: 1, quantity: 10 }, { productId: 2, quantity: 20 }]);
+  });
+
   afterEach(function () {
     sinon.restore();
   });
