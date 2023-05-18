@@ -48,9 +48,26 @@ const deleteById = async (saleId) => {
   return response;
 };
 
+const updateById = async (saleId, update) => {
+  const allSales = update.map(async ({ productId, quantity }) => {
+    await connection.execute(
+      'UPDATE StoreManager.sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?;',
+      [quantity, saleId, productId],
+    );
+  });
+
+  await Promise.all(allSales);
+
+  const [result] = await connection.execute(
+    'SELECT product_id, quantity FROM StoreManager.sales_products WHERE sale_id = ?;', [saleId],
+  );
+
+  return camelize(result);
+};
 module.exports = {
   insert,
   findAll,
   selectById,
   deleteById,
+  updateById,
 }; 

@@ -50,9 +50,28 @@ const deleteSale = async (saleId) => {
   return { type: null, message: result };
 };
 
+const updateSale = async (saleId, update) => {
+  let error = schema.validateId(saleId);
+  if (error.type) return error;
+
+  error = await schema.validateSaleExists(saleId);
+  if (error.type) return error;
+
+  error = await schema.validateNewSale(update);
+  if (error.type) return error;
+
+  error = await schema.validateProductExists(update);
+  if (error.type) return error;
+
+  const newSale = await salesModel.updateById(saleId, update);
+
+  return { type: null, message: { saleId, itemsUpdated: newSale } };
+};
+
 module.exports = {
   createSale,
   findAllSales,
   findSaleById,
   deleteSale,
+  updateSale,
 };

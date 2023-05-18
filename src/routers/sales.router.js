@@ -25,4 +25,10 @@ router.delete(
   salesController.removeSale,
 );
 
+router.put(
+  '/:id',
+  validateNewSaleFields,
+  salesController.editSale,
+);
+
 module.exports = router;
